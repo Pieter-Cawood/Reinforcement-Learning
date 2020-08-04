@@ -9,7 +9,7 @@
 
 Given this environment and a uniform random policy, implement 2 versions of policy evaluation:<br>
 (For both versions: The initial approximation, <img src="https://render.githubusercontent.com/render/math?math=v_0">, is chosen
-arbitrarily (except that the terminal state, if any, must be given value 0)<br>
+arbitrarily (except that the terminal state, if any, must be given value 0)<br><br>
 **Version 1** <br>
 A two-array version, which only updates the value function after looping through all states 
 
