@@ -1,5 +1,6 @@
 # DP
- **Modify the gridworld you created last week to create a 4x4 version**
+ **Modify the gridworld you created last week to create a 4x4 version** <br>
+
 • No obstacles <br>
 • Rewards of -1 on all transitions <br>
 • Goal in the top left corner – entering the goal state ends the episode <br>
