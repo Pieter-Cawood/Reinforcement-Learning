@@ -4,6 +4,7 @@
 • No obstacles <br>
 • Rewards of -1 on all transitions <br>
 • Goal in the top left corner – entering the goal state ends the episode <br>
+• Threshold value of 𝜃 = 0.01 
 
 ### 1. First we consider how to compute the state-value function <img src="https://render.githubusercontent.com/render/math?math=v_\pi"> for an arbitrary policy <img src="https://render.githubusercontent.com/render/math?math=\pi">
 
@@ -17,7 +18,7 @@ A two-array version, which only updates the value function after looping through
 ![Figure 1-3](2array.png "Figure 1-3")
 
 **Version 2** <br>
-• An in-place version with a threshold value of 𝜃 = 0.01 <br>
+• An in-place version<br>
 
 ![Figure 1-1](in-place.png "Figure 1-1")
 
