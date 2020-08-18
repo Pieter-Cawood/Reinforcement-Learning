@@ -10,6 +10,7 @@ import numpy as np
 from environments.gridworld import GridworldEnv
 import timeit
 import matplotlib.pyplot as plt
+import time
 
 
 def policy_evaluation(env, policy, discount_factor=1.0, theta=0.00001):
@@ -49,6 +50,7 @@ def policy_evaluation(env, policy, discount_factor=1.0, theta=0.00001):
         if delta < theta:
             break
     return v
+
 
 def policy_iteration(env, policy_evaluation_fn=policy_evaluation, discount_factor=1.0):
     """
@@ -94,15 +96,15 @@ def policy_iteration(env, policy_evaluation_fn=policy_evaluation, discount_facto
         policy_stable = True
 
         for state in range(env.observation_space.n):
-            #Get the greedy action's index
+            # Get the greedy action's index
             old_action = np.argmax(policy[state])
 
-            #Check values for actions from this state
+            # Check values for actions from this state
             action_values = one_step_lookahead(state, v)
-            #Best lookahead action
+            # Best lookahead action
             best_action = np.argmax(action_values)
 
-            #Update policy to have 0 for all actions except best one
+            # Update policy to have 0 for all actions except best one
             policy[state] = np.zeros(env.action_space.n)
             policy[state][best_action] = 1
 
@@ -160,12 +162,28 @@ def value_iteration(env, theta=0.0001, discount_factor=1.0):
             delta = max(delta, abs(max_val - v[state]))
             # Update value function
             v[state] = max_val
-            #Update policy
+            # Update policy
             policy[state] = np.zeros(env.action_space.n)
             policy[state][np.argmax(new_values)] = 1
         if delta < theta:
             break
     return policy, v
+
+POL_ITER_TIMER_SETUP = '''
+from __main__ import policy_iteration
+from environments.gridworld import GridworldEnv
+
+env = GridworldEnv(shape=[5, 5], terminal_states=[24], terminal_reward=0, step_reward=-1)
+
+'''
+
+VAL_ITER_TIMER_SETUP = '''
+from __main__ import value_iteration
+from environments.gridworld import GridworldEnv
+
+env = GridworldEnv(shape=[5, 5], terminal_states=[24], terminal_reward=0, step_reward=-1)
+
+'''
 
 def main():
     # Create Gridworld environment with size of 5 by 5, with the goal at state 24. Reward for getting to goal state is 0, and each step reward is -1
@@ -183,7 +201,7 @@ def main():
     print("")
 
     # Evaluate random policy
-    v = policy_evaluation(env, policy, discount_factor=1.0, theta=0.00001)
+    v = policy_evaluation(env, policy)
 
     # Print valuation function
     print(v)
@@ -196,15 +214,14 @@ def main():
                            -95.07, -88.52, -74.10, -47.99, 0.0])
     np.testing.assert_array_almost_equal(v, expected_v, decimal=2)
 
-
     print("*" * 5 + " Policy iteration " + "*" * 5)
     print("")
 
-    #Greedy improvement
-    policy, v = policy_iteration(env, policy_evaluation_fn=policy_evaluation, discount_factor=1.0)
+    # Greedy improvement
+    policy, v = policy_iteration(env)
 
     # Print out best action for each state in grid shape
-    print(np.argmax(policy,axis=1).reshape(env.shape))
+    print(np.argmax(policy, axis=1).reshape(env.shape))
     print()
     # Pint state value for each state, as grid shape
     print(v.reshape(env.shape))
@@ -221,10 +238,10 @@ def main():
     print("")
 
     # use  value iteration to compute optimal policy and state values
-    policy, v = value_iteration(env, theta=0.0001, discount_factor=1.0)
+    policy, v = value_iteration(env)
 
     # Print out best action for each state in grid shape
-    print(np.argmax(policy,axis=1).reshape(env.shape))
+    print(np.argmax(policy, axis=1).reshape(env.shape))
     print()
     # Pint state value for each state, as grid shape
     print(v.reshape(env.shape))
@@ -236,6 +253,30 @@ def main():
                            -5., -4., -3., -2., -1.,
                            -4., -3., -2., -1., 0.])
     np.testing.assert_array_almost_equal(v, expected_v, decimal=1)
+
+    # Plot average running times for discount factors
+    discount_values = np.logspace(-0.2, 0, num=30)
+    policy_iter_times = []
+    value_iter_times = []
+
+    for discount in discount_values:
+        policy_iter_times.append(
+            timeit.timeit("policy_iteration(env,discount_factor="+str(discount)+")",
+                          setup= POL_ITER_TIMER_SETUP,
+                          number=10))
+        value_iter_times.append(
+            timeit.timeit("value_iteration(env,discount_factor=" + str(discount) + ")",
+                          setup=VAL_ITER_TIMER_SETUP,
+                          number=10))
+
+    plt.plot(discount_values, policy_iter_times, 'r')
+    plt.plot(discount_values, value_iter_times, 'b')
+    plt.title('Policy Iteration vs Value Iteration')
+    plt.legend(['Policy iteration', 'Value iteration'])
+    plt.xlabel('Discount rate')
+    plt.ylabel('Execution time (seconds)')
+    plt.show()
+
 
 if __name__ == "__main__":
     main()
