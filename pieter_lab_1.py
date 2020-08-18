@@ -34,7 +34,7 @@ def policy_evaluation(env, policy, discount_factor=1.0, theta=0.00001):
     v = np.zeros(env.observation_space.n)
     # Guaranteed to converge
     while True:
-        delta = - float('inf')
+        delta = 0
         # Loop through each state
         for state_index in range(env.observation_space.n):
             new_val = 0
@@ -79,9 +79,38 @@ def policy_iteration(env, policy_evaluation_fn=policy_evaluation, discount_facto
         Returns:
             A vector of length env.action_space.n containing the expected value of each action.
         """
-        raise NotImplementedError
+        state_values = np.zeros(env.action_space.n)
 
-    raise NotImplementedError
+        for action in range(env.action_space.n):
+            for prob, next_state, reward, done in env.P[state][action]:
+                state_values[action] += prob * (reward + discount_factor * V[next_state])
+        return state_values
+
+    # Uniform random policy: Give equal prob to taking each action
+    policy = np.ones([env.observation_space.n, env.action_space.n]) / env.action_space.n
+
+    while True:
+        v = policy_evaluation_fn(env, policy, discount_factor)
+        policy_stable = True
+
+        for state_index in range(env.observation_space.n):
+            #Get the greedy action's index
+            old_action = np.argmax(policy[state_index])
+
+            #Check values for actions from this state
+            action_values = one_step_lookahead(state_index, v)
+            #Best lookahead action
+            best_action = np.argmax(action_values)
+
+            #Update policy to have 0 for all actions except best one
+            policy[state_index] = np.zeros(env.action_space.n)
+            policy[state_index][best_action] = 1
+
+            if old_action != best_action:
+                policy_stable = False
+
+        if policy_stable:
+            return policy, v
 
 
 def value_iteration(env, theta=0.0001, discount_factor=1.0):
@@ -113,6 +142,10 @@ def value_iteration(env, theta=0.0001, discount_factor=1.0):
             A vector of length env.action_space.n containing the expected value of each action.
         """
         raise NotImplementedError
+        # Start with a random policy
+
+
+
 
     raise NotImplementedError
 
@@ -135,7 +168,7 @@ def main():
     # Evaluate random policy
     v = policy_evaluation(env, policy)
 
-    # TODO: print state value for each state, as grid shape
+    print(v)
 
     # Test: Make sure the evaluated policy is what we expected
     expected_v = np.array([-106.81, -104.81, -101.37, -97.62, -95.07,
@@ -145,14 +178,15 @@ def main():
                            -95.07, -88.52, -74.10, -47.99, 0.0])
     np.testing.assert_array_almost_equal(v, expected_v, decimal=2)
 
+
     print("*" * 5 + " Policy iteration " + "*" * 5)
     print("")
-    # TODO: use  policy improvement to compute optimal policy and state values
-    policy, v = [], []  # call policy_iteration
 
-    # TODO Print out best action for each state in grid shape
+    policy, v = policy_iteration(env, policy_evaluation_fn=policy_evaluation, discount_factor=1.0)
 
-    # TODO: print state value for each state, as grid shape
+    print(np.argmax(policy,axis=1).reshape(env.shape))
+    print()
+    print(v.reshape(env.shape))
 
     # Test: Make sure the value function is what we expected
     expected_v = np.array([-8., -7., -6., -5., -4.,
