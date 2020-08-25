@@ -92,11 +92,11 @@ def policy_iteration(env, policy_evaluation_fn=policy_evaluation, discount_facto
         return state_values
 
     policy = np.ones([env.observation_space.n, env.action_space.n]) / env.action_space.n
-
+    #count = 0
     while True:
         val_fn = policy_evaluation(env, policy, discount_factor)
         policy_stability = True
-
+        #count += 1
         for state in range(env.observation_space.n):
             old_action = np.argmax(policy[state])
 
@@ -110,6 +110,7 @@ def policy_iteration(env, policy_evaluation_fn=policy_evaluation, discount_facto
             policy[state][max_action] = 1
 
         if policy_stability == True:
+            #print("Count {}".format(count))
             break
     val_fn = np.round(val_fn, 2)
     return policy, val_fn
@@ -179,7 +180,8 @@ def main():
     # Create Gridworld environment with size of 5 by 5, with the goal at state 24. Reward for getting to goal state is 0, and each step reward is -1
     env = GridworldEnv(shape=[5, 5], terminal_states=[24], terminal_reward=0, step_reward=-1)
     state = env.reset() # Resets the environment to initial state
-    print("")
+    print("Question 1:")
+    print("Starting Position")
     env.render() # Visual the current state
     print("")
 
@@ -220,8 +222,11 @@ def main():
         #print(position_index)
         it.iterindex = random_policy[position_index]
         x,y = it.multi_index
-        random_trajectory[x,y] = random_policy_actions[position_index]
-    print("Question 1:")
+        if (position_index == (len(random_policy)-2)):
+            random_trajectory[x,y] = 'T'
+        else:
+            random_trajectory[x,y] = random_policy_actions[position_index]
+
     print("States Visited:")
     print(random_policy)
     print("")
@@ -258,10 +263,20 @@ def main():
     policy, v = policy_iteration(env) # call policy_iteration
 
     #Print out best action for each state in grid shape
-    optimal_policy = np.full(env.observation_space.n, -1)
+    optimal_policy = np.full(env.observation_space.n, 'O')
     for state in range(env.observation_space.n):
         index = np.where(policy[state] == 1)
-        optimal_policy[state] = index[0]
+        if index[0] == 0:
+            action = 'U'
+        elif index[0] == 1:
+            action = 'R'
+        elif index[0] == 2:
+            action = 'D'
+        elif index[0] == 3:
+            action = 'L'
+        optimal_policy[state] = action
+    optimal_policy[env.observation_space.n-1] = 'T'
+    #optimal_policy[env.__terminal_states] = 'T'
     print("Best action for each state in grid:")
     print(optimal_policy.reshape(env.shape))
 
@@ -285,10 +300,19 @@ def main():
     policy, v = value_iteration(env)# call value_iteration
 
     #Print out best action for each state in grid shape
-    optimal_policy = np.full(env.observation_space.n, -1)
+    optimal_policy = np.full(env.observation_space.n, 'O')
     for state in range(env.observation_space.n):
         index = np.where(policy[state] == 1)
-        optimal_policy[state] = index[0]
+        if index[0] == 0:
+            action = 'U'
+        elif index[0] == 1:
+            action = 'R'
+        elif index[0] == 2:
+            action = 'D'
+        elif index[0] == 3:
+            action = 'L'
+        optimal_policy[state] = action
+    optimal_policy[env.observation_space.n - 1] = 'T'
     print("Best action for each state in grid:")
     print(optimal_policy.reshape(env.shape))
     #Print state value for each state, as grid shape
@@ -325,8 +349,8 @@ from environments.gridworld import GridworldEnv
 env = GridworldEnv(shape=[5, 5], terminal_states=[24], terminal_reward=0, step_reward=-1)
 '''
 for gamma in gamma_arr:
-    policy_iter_times.append(timeit.timeit(setup = policy_setup, stmt = "policy_iteration(env,discount_factor=" + str(gamma) + ")", number = 10))
-    value_iter_times.append(timeit.timeit(setup = value_setup, stmt = "value_iteration(env,discount_factor=" + str(gamma) + ")", number=10))
+    policy_iter_times.append(timeit.timeit(setup = policy_setup, stmt = "policy_iteration(env,discount_factor=" + str(gamma) + ")", number = 10)/10)
+    value_iter_times.append(timeit.timeit(setup = value_setup, stmt = "value_iteration(env,discount_factor=" + str(gamma) + ")", number=10)/10)
 
 plt.plot(gamma_arr, policy_iter_times, color="purple", label='Policy iteration')
 plt.plot(gamma_arr, value_iter_times, color="#42e3f5", label='Value iteration')
