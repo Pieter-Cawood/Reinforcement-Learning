@@ -2,9 +2,11 @@
 
 http://sabinemaennel.ch/udacity-deeplearning/Temporal_Difference.html
 
+
 ## Use the CliffWalking domain from OpenAI gym <br>
 • See Example 6.6, pg 132 in Sutton and Barto [2018]<br>
 ## Modify the TD(𝜆) algorithm presented to implement SARSA(𝜆)
+http://www.incompleteideas.net/book/first/ebook/node77.html<br>
 • The only difference here is that there is an eligibility trace for each state-action
 pair!<br>
 • See the first edition of Sutton and Barto for more info<br>
