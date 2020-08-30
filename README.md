@@ -1,7 +1,6 @@
 # Cliffwalking
 
-http://sabinemaennel.ch/udacity-deeplearning/Temporal_Difference.html
-
+## SARSA(LMBDA) <br>
 ![Sarsa(Lmbda)](Algorithm.PNG "SARSA LAMBDA")
 
 ## Use the CliffWalking domain from OpenAI gym <br>
