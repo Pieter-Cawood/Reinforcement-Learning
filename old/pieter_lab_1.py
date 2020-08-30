@@ -261,11 +261,11 @@ def main():
 
     for discount in discount_values:
         policy_iter_times.append(
-            timeit.timeit("policy_iteration(env,discount_factor="+str(discount)+")",
+            timeit.timeit("policy_iteration(env, discount_factor="+str(discount)+")",
                           setup= POL_ITER_TIMER_SETUP,
                           number=10))
         value_iter_times.append(
-            timeit.timeit("value_iteration(env,discount_factor=" + str(discount) + ")",
+            timeit.timeit("value_iteration(env, discount_factor=" + str(discount) + ")",
                           setup=VAL_ITER_TIMER_SETUP,
                           number=10))
 
