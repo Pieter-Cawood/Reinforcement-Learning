@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# PNG generated images
+*.png
+
 # C extensions
 *.so
 
@@ -102,6 +105,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.idea
+
 .env
 .venv
 env/
