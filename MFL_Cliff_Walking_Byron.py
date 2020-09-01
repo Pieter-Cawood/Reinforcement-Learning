@@ -30,36 +30,43 @@ def espilon_greedy(env, state, Q, epsilon=0.1):
     return action
 
 def Sarsa_lambda(env, episodes=500, epsilon=0.1, alpha=0.5, lambda_s=0.5, 
-                 discount_factor=0.99):
+                 discount_factor=0.95):
     
-    # initialize Q(s,a)
+    # initialize Q(S,A) and E(S,A)
     Q = np.zeros((env.nS, env.nA))  
+    E = np.zeros((env.nS, env.nA))  
     Q_epochs = np.zeros((env.nS, env.nA, episodes))
     
     # Loop over episodes    
     for epi in range(episodes):
         state = env.reset()
         action = espilon_greedy(env, state, Q, epsilon)
+        done = False
+        count = 0
         
         # loop over steps
-        for i in range(1000):        
+        while not done:   
+            count += 1
             # take action A, observe R, S'
             S_dash, reward, done, info = env.step(action)
 
             # choose A' from S' using policy
             A_dash = espilon_greedy(env, S_dash, Q, epsilon)
             
-            # update Q(S,A)
-            update = reward + discount_factor*Q[S_dash,A_dash] - Q[state,action]
-            Q[state, action] = Q[state,action] + alpha*update
+            # update Q and E
+            E[state, action] += 1
+            delta = reward + discount_factor*Q[S_dash, A_dash] - Q[state, action]
+            Q = Q + alpha*delta*E
+            E = discount_factor*lambda_s*E
             
             # update state and action
             state = S_dash
             action = A_dash
-
-            if done:
-                Q_epochs[:, :, epi] = Q
+            
+            if count > 1000:
                 break
+
+        Q_epochs[:, :, epi] = Q
             
     return Q_epochs
 
@@ -72,8 +79,8 @@ def main():
     
     # Compute Q with Sarsa Lambda algorithm
     Q = []
-    for i, lam in enumerate(lambda_vals):
-        Q.append(np.max(Sarsa_lambda(env), axis=1).reshape(4, 12, 500))
+    for lam in lambda_vals:
+        Q.append(np.max(Sarsa_lambda(env, lambda_s=lam), axis=1).reshape(4, 12, 500))
     
     
     # Create video
@@ -110,6 +117,7 @@ def main():
     fig = plt.figure()
     ani = animation.FuncAnimation(fig, animate)
     ani.save('Byron_Animation.mp4', writer=writer)
+    print('Finished')
             
 if __name__ == "__main__":
     main()
