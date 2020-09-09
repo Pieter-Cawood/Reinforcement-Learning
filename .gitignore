@@ -3,13 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# PNG generated images
-*.png
-
 # C extensions
 *.so
 
 # Distribution / packaging
+resources/
 .Python
 build/
 develop-eggs/
