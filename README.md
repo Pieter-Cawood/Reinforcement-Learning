@@ -5,6 +5,3 @@
 
 ## Homework <br>
 ![Homework](homework.png "Homework")
-
-## Notes <br>
-- I think Velocity & Position are the two features/tilings required.
