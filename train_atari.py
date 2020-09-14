@@ -1,13 +1,17 @@
 import random
 import numpy as np
 import gym
+import torch
 
 from dqn.agent import DQNAgent
 from dqn.replay_buffer import ReplayBuffer
 from dqn.wrappers import *
 
 if __name__ == "__main__":
-
+    
+    if not torch.cuda.is_available():
+        print("This will be slow! No GPU available")
+    
     hyper_params = {
         "seed": 42,  # which seed to use
         "env": "PongNoFrameskip-v4",  # name of the game
