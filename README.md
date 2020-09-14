@@ -1,4 +1,7 @@
 # Lab 3 - Deep Q-Network
+By wits<br>
+https://github.com/raillab/dqn
+
 
 Box observation space<br>
 https://github.com/openai/gym/blob/master/gym/spaces/box.py
