@@ -2,6 +2,7 @@
 
 Box observation space<br>
 https://github.com/openai/gym/blob/master/gym/spaces/box.py
+<br>
 ![algo](resources/algo.PNG?raw=true "Title")
 
 ![Preprocessing](resources/preprocessing.PNG?raw=true "Title")
