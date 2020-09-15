@@ -338,6 +338,8 @@ def SARSA(env, num_episodes, discount_factor=1.0, epsilon=0.1, alpha=0.5, print_
             
     return Q, stats
 
+    raise NotImplementedError
+
 
 def q_learning(env, num_episodes, discount_factor=1.0, epsilon=0.05, alpha=0.5, print_=False):
     """
@@ -425,7 +427,7 @@ def run_mc():
     print("")
     print("Question 1.1.4")
     print("The plot using 500,000 steps is much smoother than the one using 10,000 steps.")
-    print("This is due V converging to the true value of V for a sufficiently large number of steps. ")
+    print("This is due to our estimate of V converging to the true value of V for a sufficiently large number of steps. ")
 
     print("\nmc_control_epsilon_greedy\n")
     Q, policy = mc_control_epsilon_greedy(
@@ -467,7 +469,7 @@ def run_td():
     print("")
     print("Question 2.2.4")
     print("The SARSA algorithm avoids the cliff as much as possible because it assumes that with a non-zero probability it could still walk off the cliff if next to the cliff.")
-    print("The Q-learning assumes that the next step will be the optimal one, so it will skirt the cliff to reach the goal.")
+    print("The Q-learning algorithm assumes that the next step will be the optimal one, so it will skirt the cliff to reach the goal.")
     
     print("")
     print("Question 2.2.5")
