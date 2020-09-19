@@ -1,11 +1,11 @@
 from gym import spaces
 import numpy as np
+import torch
 
 from dqn.model import DQN
 from dqn.replay_buffer import ReplayBuffer
 
 device = "cuda"
-
 
 class DQNAgent:
     def __init__(
@@ -28,19 +28,41 @@ class DQNAgent:
         :param gamma: the discount factor
         """
 
-        # TODO: Initialise agent's networks, optimiser and replay buffer
-        raise NotImplementedError
+        self.replay_buffer = replay_buffer
+        self.use_double_dqn = use_double_dqn
+        self.lr = lr
+        self.batch_size = batch_size
+        self.discount_factor = gamma
+        self.target_network_1 = DQN(observation_space, action_space).to(device) 
+        self.target_network_2 = None
+        
+        if self.use_double_dqn:
+            self.target_network_2 = DQN(observation_space, action_space).to(device)
+            
 
     def optimise_td_loss(self):
         """
         Optimise the TD-error over a single minibatch of transitions
         :return: the loss
         """
-        # TODO
-        #   Optimise the TD-error over a single minibatch of transitions
-        #   Sample the minibatch from the replay-memory
-        #   using done (as a float) instead of if statement
-        #   return loss
+        # Get mini-batch
+        states, actions, rewards, next_states, dones = self.replay_buffer.sample(self.batch_size)
+        # To torch
+        # Normalize data
+        states = states / 255
+        next_state = next_states / 255
+        # Create tensors
+        states = torch.from_numpy(states).to(device)
+        actions = torch.from_numpy(actions).to(device)
+        rewards = torch.from_numpy(rewards).to(device)
+        next_states = torch.from_numpy(next_states).to(device)
+        dones = torch.from_numpy(dones).to(device)
+
+        Q = self.
+
+
+
+        stop = True
 
         raise NotImplementedError
 

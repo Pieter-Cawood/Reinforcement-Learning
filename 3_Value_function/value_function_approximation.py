@@ -159,7 +159,7 @@ def semi_gradient_sarsa(n_episodes, n_runs, epsilon, alpha, discount_factor, pri
         env = gym.make('MountainCar-v0')
         # Only video first run
         if run_number == 0:
-            env = wrappers.Monitor(env, './output',
+            env = wrappers.Monitor(env, './',
                                    video_callable=_record_episode,
                                    force=True)
         # Make tiling value function
@@ -194,8 +194,8 @@ def semi_gradient_sarsa(n_episodes, n_runs, epsilon, alpha, discount_factor, pri
         env.close()
         if print_:
             print('Runs complete: {:d}'.format(run_number + 1))
-    average_steps = [value/n_runs for key, value in number_of_steps.items()]
-    return average_steps
+    # Return average steps over all runs
+    return [value/n_runs for key, value in number_of_steps.items()]
 
 
 if __name__ == "__main__":
@@ -208,5 +208,5 @@ if __name__ == "__main__":
     plt.semilogy(range(len(average_steps)), average_steps)
     plt.xlabel('Episode number')
     plt.ylim([100,300])
-    plt.savefig('./output/plot.png')
+    plt.savefig('plot.png')
     plt.show()
