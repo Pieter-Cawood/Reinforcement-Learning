@@ -7,12 +7,6 @@ from collections import defaultdict
 from dqn.agent import DQNAgent
 from dqn.replay_buffer import ReplayBuffer
 from dqn.wrappers import *
-from rpy2.robjects import r
-
-def argmax(numpy_array):
-    """ argmax implementation that chooses randomly between ties """
-    return np.random.choice(np.flatnonzero(numpy_array == numpy_array.max()))
-
 
 if __name__ == "__main__":
     
@@ -22,17 +16,18 @@ if __name__ == "__main__":
     hyper_params = {
         "seed": 42,  # which seed to use
         "env": "PongNoFrameskip-v4",  # name of the game
-        "replay-buffer-size": int(5e3),  # replay buffer size
-        "learning-rate": 1e-4,  # learning rate for Adam optimizer
+        "replay-buffer-size": int(1e6),  # replay buffer size
+        "learning-rate": 25e-5,  # learning rate for Adam optimizer
+        "momentum": 0.95, # Momentum suggested by the double q paper
         "discount-factor": 0.99,  # discount factor
         "num-steps": int(1e6),  # total number of steps to run the environment for
-        "batch-size": 256,  # number of transitions to optimize at the same time
+        "batch-size": 32,  # number of transitions to optimize at the same time
         "learning-starts": 10000,  # number of steps before learning starts
-        "learning-freq": 5,  # number of iterations between every optimization step
+        "learning-freq": 1,  # number of iterations between every optimization step
         "use-double-dqn": True,  # use double deep Q-learning
         "target-update-freq": 1000,  # number of iterations between every target network update
         "eps-start": 1.0,  # e-greedy start threshold
-        "eps-end": 0.01,  # e-greedy end threshold
+        "eps-end": 0.1,  # e-greedy end threshold
         "eps-fraction": 0.1,  # fraction of num-steps
         "print-freq": 10,
     }
@@ -46,7 +41,7 @@ if __name__ == "__main__":
 
     env = NoopResetEnv(env, noop_max=30)   # No co-op max, as described in paper's parameter list
     env = MaxAndSkipEnv(env, skip=4)
-    env = EpisodicLifeEnv(env)  # As described in training details section, when lifes are up - so is the game
+    env = EpisodicLifeEnv(env)  # As described in training details section, when lives are up - so is the game
     env = FireResetEnv(env)  
     env = WarpFrame(env)    # Warp frame to 84x84 as described in paper
     env = PyTorchFrame(env) # Swap dimensions so channels are 1st -> Pytorch model needs this
@@ -60,15 +55,13 @@ if __name__ == "__main__":
                      replay_buffer, 
                      hyper_params["use-double-dqn"],
                      hyper_params["learning-rate"],
+                     hyper_params["momentum"],
                      hyper_params["batch-size"],
-                     gamma =  hyper_params["discount-factor"])
+                     hyper_params["discount-factor"])
                      
 
     eps_timesteps = hyper_params["eps-fraction"] * float(hyper_params["num-steps"])
     episode_rewards = [0.0]
-    
-    # A nested dictionary that maps state -> (action -> action-value).
-    Q = defaultdict(lambda: np.zeros(env.action_space.n))
 
     state = env.reset()
     for t in range(hyper_params["num-steps"]):
@@ -82,7 +75,7 @@ if __name__ == "__main__":
         if sample <= eps_threshold:
             action = env.action_space.sample()
         else:
-            action = argmax(Q[state])
+            action = agent.act(np.array(state))
             
         # Take a leap of faith in the environment (done : float)
         next_state, reward, done, info = env.step(action)
