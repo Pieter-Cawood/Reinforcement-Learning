@@ -37,6 +37,8 @@ class DQNAgent:
         self.target_network = DQN(observation_space, action_space).to(device)
         # Optimizer used in double trouble dqn paper
         self.optimizer = torch.optim.Adam(self.policy_network.parameters(), lr= lr)
+        self.update_target_network()
+        self.target_network.eval()
 
     def optimise_td_loss(self):
         """

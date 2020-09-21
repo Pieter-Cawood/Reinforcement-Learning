@@ -53,7 +53,6 @@ if __name__ == "__main__":
                      replay_buffer, 
                      hyper_params["use-double-dqn"],
                      hyper_params["learning-rate"],
-                     hyper_params["momentum"],
                      hyper_params["batch-size"],
                      hyper_params["discount-factor"])
                      
