@@ -7,8 +7,7 @@ class Flatten(nn.Module):
     Flatten a multi dimensional output from the Conv2D to a single dimension
     """
     def forward(self, x):
-        batch_size = x.shape[0]
-        return x.view(batch_size, -1)
+        return x.view(-1, x.shape[0])
 
 
 class DQN(nn.Module):

@@ -2,14 +2,12 @@ import random
 import numpy as np
 import gym
 import torch
-from collections import defaultdict
 
 from dqn.agent import DQNAgent
 from dqn.replay_buffer import ReplayBuffer
 from dqn.wrappers import *
 
 if __name__ == "__main__":
-    
     if not torch.cuda.is_available():
         print("This will be slow! No GPU available, use Colab instead")
     
@@ -17,8 +15,7 @@ if __name__ == "__main__":
         "seed": 42,  # which seed to use
         "env": "PongNoFrameskip-v4",  # name of the game
         "replay-buffer-size": int(1e6),  # replay buffer size
-        "learning-rate": 25e-5,  # learning rate for Adam optimizer
-        "momentum": 0.95, # Momentum suggested by the double q paper
+        "learning-rate": 1e-4,  # learning rate for Adam optimizer
         "discount-factor": 0.99,  # discount factor
         "num-steps": int(1e6),  # total number of steps to run the environment for
         "batch-size": 32,  # number of transitions to optimize at the same time
@@ -47,7 +44,8 @@ if __name__ == "__main__":
     env = PyTorchFrame(env) # Swap dimensions so channels are 1st -> Pytorch model needs this
     env = ClipRewardEnv(env)   #As described in Training details section
     env = FrameStack(env, 4)   # As described in hyperparameter list, agent history length
-   # env = gym.wrappers.Monitor(env, './video/', video_callable=lambda episode_id: episode_id % 10 == 0, force=True)
+    env = gym.wrappers.Monitor(env, './video/', video_callable=lambda episode: episode % 10 == 0, force=True)
+
     replay_buffer = ReplayBuffer(hyper_params["replay-buffer-size"])
 
     agent = DQNAgent(env.observation_space,
@@ -64,15 +62,14 @@ if __name__ == "__main__":
     episode_rewards = [0.0]
 
     state = env.reset()
-    for t in range(hyper_params["num-steps"]):
+    for t in range(hyper_params["num-steps"] + 1):
         fraction = min(1.0, float(t) / eps_timesteps)
         eps_threshold = hyper_params["eps-start"] + fraction * (
             hyper_params["eps-end"] - hyper_params["eps-start"]
         )
-        # Epsilon greedy action selection
         sample = random.random()
-        action = None
-        if sample <= eps_threshold:
+        # Last run
+        if sample < eps_threshold:
             action = env.action_space.sample()
         else:
             action = agent.act(np.array(state))
@@ -80,8 +77,9 @@ if __name__ == "__main__":
         # Take a leap of faith in the environment (done : float)
         next_state, reward, done, info = env.step(action)
         done = float(done)
-        
-        episode_rewards.append(reward)
+
+        # Sum step reward for episode's total
+        episode_rewards[-1] += reward
 
         # Store agent experience at each timestep
         replay_buffer.add(state, action, reward, next_state, done)
@@ -119,3 +117,4 @@ if __name__ == "__main__":
             print("mean 100 episode reward: {}".format(mean_100ep_reward))
             print("% time spent exploring: {}".format(int(100 * eps_threshold)))
             print("********************************************************")
+
