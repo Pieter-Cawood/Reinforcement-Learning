@@ -1,25 +1,7 @@
-# Lab 3 - Deep Q-Network
-By wits<br>
-https://github.com/raillab/dqn
-
-
-Box observation space<br>
-https://github.com/openai/gym/blob/master/gym/spaces/box.py
-<br>
-Mini-batch gradient descent:
-<br>
-http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf
-<br>
-**Algorithm**<br>
-![algo](resources/algo.PNG?raw=true "Title")
-<br>
-**Normal Q-learning**<br>
-![qlearning](resources/Q-learning.PNG?raw=true "Title")
-
-![Preprocessing](resources/preprocessing.PNG?raw=true "Title")
-![Model architecture](resources/architecture.PNG?raw=true "Title")
-![Training](resources/training.png?raw=true "Title")
-![Evaluation](resources/evaluation.PNG?raw=true "Title")
-![Algorithm](resources/algorithm.png?raw=true "Title")
-![training_q](resources/training_q.PNG?raw=true "Title")
-![pong](resources/pong.PNG?raw=true "Title")
+# Lab 4 - Policy Gradient
+By wits student<br>
+https://github.com/andrecianflone/rl_at_ammi/blob/master/REINFORCE_solution.ipynb <br>
+By Phil Tabor<br>
+https://github.com/philtabor/Youtube-Code-Repository/tree/master/ReinforcementLearning/PolicyGradient/reinforce
+Torch distributions<br>
+https://pytorch.org/docs/stable/distributions.html
