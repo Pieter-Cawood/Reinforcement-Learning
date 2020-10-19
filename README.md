@@ -7,4 +7,5 @@ Torch distributions<br>
 https://pytorch.org/docs/stable/distributions.html
 
 # NetHack Project
-API https://github.com/facebookresearch/nle
+API https://github.com/facebookresearch/nle <br>
+Paper https://arxiv.org/pdf/2006.13760.pdf
