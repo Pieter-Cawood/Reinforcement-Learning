@@ -274,6 +274,6 @@ def run_reinforce_with_naive_baseline(mean, std, x_fill, y_upper, y_lower):
 
 
 if __name__ == '__main__':
-    # run_reinforce()
-    # mean, std, x_fill, y_upper, y_lower = investigate_variance_in_reinforce()
+    run_reinforce()
+    mean, std, x_fill, y_upper, y_lower = investigate_variance_in_reinforce()
     run_reinforce_with_naive_baseline(mean, std, x_fill, y_upper, y_lower)
