@@ -19,7 +19,6 @@ class ActorCriticNetwork(nn.Module):
             nn.Linear(input_dims, hidden_dims),
             nn.ReLU(),
             nn.Linear(hidden_dims, a_size),
-            nn.ReLU(),
         ) \
             .to(device)
 
@@ -60,12 +59,12 @@ class Agent():
 
 if __name__ == '__main__':
     env = gym.make('LunarLander-v2')
-    env = gym.wrappers.Monitor(env, './output/', video_callable=lambda episode_id: episode_id % 1 == 0, force=True)
+    #env = gym.wrappers.Monitor(env, './output/', video_callable=lambda episode_id: episode_id % 1 == 0, force=True)
     discount_factor = 1.0
-    agent = Agent(learning_rate=1e-4,
+    agent = Agent(learning_rate=1e-3,
                   input_dims=env.observation_space.shape[0],
                   discount_factor=discount_factor,
-                  hidden_dims=256,
+                  hidden_dims=128,
                   a_size=env.action_space.n
                   )
 
