@@ -41,7 +41,7 @@ class ActorCriticNetwork(nn.Module):
         policy = self.actor_network(state_)
         # Critic, value function estimate
         value = self.critic_network(state_)
-        return F.softmax(policy, dim=0), value
+        return F.softmax(policy, dim=-1), value
 
 class Agent():
     def __init__(self, learning_rate, input_dims, discount_factor, hidden_dims, a_size):
@@ -60,12 +60,12 @@ class Agent():
 
 if __name__ == '__main__':
     env = gym.make('LunarLander-v2')
-    env = gym.wrappers.Monitor(env, './output/', video_callable=lambda episode_id: episode_id % 5 == 0, force=True)
-    discount_factor = 1.00
-    agent = Agent(learning_rate=1e-2,
+    env = gym.wrappers.Monitor(env, './output/', video_callable=lambda episode_id: episode_id % 1 == 0, force=True)
+    discount_factor = 1.0
+    agent = Agent(learning_rate=1e-4,
                   input_dims=env.observation_space.shape[0],
                   discount_factor=discount_factor,
-                  hidden_dims=512,
+                  hidden_dims=256,
                   a_size=env.action_space.n
                   )
 
@@ -78,7 +78,6 @@ if __name__ == '__main__':
         score = 0
         score_history = []
         log_probs = []
-
         for step in range(n_steps):
 
             actor_dist, critic_value = agent.new_state(state)
@@ -96,10 +95,10 @@ if __name__ == '__main__':
 
             reward = torch.Tensor([reward]).to(device)
 
-            delta = reward + discount_factor * critic_value_ * (1 - int(done)) - critic_value
+            delta = reward + (discount_factor * critic_value_ * (1 - int(done))) - critic_value
 
-            actor_loss = -log_probs * delta
-            critic_loss = delta.pow(2).mean()
+            actor_loss =  - delta * log_probs
+            critic_loss = (critic_value - reward)**2
 
             agent.actor_critic.optimizer.zero_grad()
             (actor_loss + critic_loss).backward()
