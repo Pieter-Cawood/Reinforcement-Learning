@@ -84,7 +84,6 @@ def reinforce(env, policy_model, seed, learning_rate,
 
 
 def compute_returns_naive_baseline(rewards, gamma):
-    returns = sum([(gamma**i) * reward for i, reward in enumerate(rewards)])
     r = 0
     returns = []
     for step in reversed(range(len(rewards))):
@@ -203,10 +202,10 @@ def investigate_variance_in_reinforce():
     plt.xlabel("Episode")
     plt.ylabel("Score")
     plt.savefig('Question 1.5.png')
-    return mean, std
+    return mean, std, x_fill, y_upper, y_lower
 
 
-def run_reinforce_with_naive_baseline(mean, std):
+def run_reinforce_with_naive_baseline(mean, std, x_fill, y_upper, y_lower):
     env = gym.make('CartPole-v1')
     
     print("Run REINFORCE with naive baseline.")
@@ -253,23 +252,26 @@ def run_reinforce_with_naive_baseline(mean, std):
                                                   verbose=True)
         run_scores.append(moving_average(scores, 50))
     
-    mean = np.mean(run_scores, axis=0)
-    std = np.std(run_scores, axis=0)
+    mean_b = np.mean(run_scores, axis=0)
+    std_b = np.std(run_scores, axis=0)
     
     # Plot learning curve with one standard deviation bounds
-    x_fill = np.arange(len(mean))
-    y_upper = mean + std
-    y_lower = mean - std
+    x_fill_b = np.arange(len(mean_b))
+    y_upper_b = mean_b + std_b
+    y_lower_b = mean_b - std_b
     plt.figure(figsize=(12, 6))
     plt.plot(mean)
     plt.fill_between(x_fill, y_upper, y_lower, alpha=0.2)
+    plt.plot(mean_b)
+    plt.fill_between(x_fill_b, y_upper_b, y_lower_b, alpha=0.2)
     plt.title("REINFORCE with naive baseline averaged over 5 seeds")
     plt.xlabel("Episode")
     plt.ylabel("Score")
+    plt.legend(['REINFORCE', 'REINFORCE with naive baseline'])
     plt.savefig('Question 2.3.2.png')
 
 
 if __name__ == '__main__':
     run_reinforce()
-    mean, std = investigate_variance_in_reinforce()
-    run_reinforce_with_naive_baseline(mean, std)
+    mean, std, x_fill, y_upper, y_lower = investigate_variance_in_reinforce()
+    run_reinforce_with_naive_baseline(mean, std, x_fill, y_upper, y_lower)
