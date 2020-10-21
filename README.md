@@ -1,6 +1,12 @@
 # NetHack Project
-API https://github.com/facebookresearch/nle <br>
-Paper https://arxiv.org/pdf/2006.13760.pdf
+NetHack Wiki: (Useful info.)<br>
+https://nethackwiki.com/
+
+NLE API: <br>
+https://github.com/facebookresearch/nle 
+
+NLE Paper: <br>
+https://arxiv.org/pdf/2006.13760.pdf
 
 
 Nethack example Agent: <br>
