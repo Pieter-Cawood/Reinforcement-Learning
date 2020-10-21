@@ -28,7 +28,7 @@ https://github.com/facebookresearch/nle/blob/master/nle/agent/agent.py
 This means we don't have to pickup items.
 
 
-## The observation space (I think the blstats is in this format.):
+## The observation space (We have to make sure the blstats are correct.):
 If we work with the same setup as the example agent we have the following: <br>
 observation_space['glyphs'] = Box(0, 5976, (21, 79), int16), which may represent a symbol with int val between 0 and 5976 in the shape (height=21, width=79)  <br>
 
@@ -60,6 +60,14 @@ observation_space['blstats'] = Box(-something, +something, (25, ), int16), which
 - [24] : NLE stat   <br>
 - [25] : NLE stat  <br>
 
+To avoid overfitting, I am only trying x & y coords, Score, Hp devided by MaxXp, and Hunger level
+
+#### Observations are not normalized
+Due to the symbollic representation, the observations should not be normalized. 
+
+## Rewards
+Maybe its a good idea to clip the rewards as the NLE paper did using tanh(r/100). They also note that intrinsic rewards, such as gold value etc do not yield good results,
+and it better to use extrinsic rewards. (From Gym reward feedback.)
 
 
 
