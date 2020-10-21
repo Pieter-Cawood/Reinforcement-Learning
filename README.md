@@ -32,7 +32,7 @@ This means we don't have to pickup items.
 If we work with the same setup as the example agent we have the following: <br>
 observation_space['glyphs'] = Box(0, 5976, (21, 79), int16), which may represent a symbol with int val between 0 and 5976 in the shape (height=21, width=79)  <br>
 
-observation_space['blstats'] = Box(-something, +something, (25, ), int16), which are 25 stats in an array: 
+observation_space['blstats'] = Box(-something, +something, (25, ), int16), which are 25 stats in an array: <br>
 [0] : X_Coordinate  <br>  
 [1] : Y_Coordinate (Strength) <br>
 [2] : Strength Percentage<br>
