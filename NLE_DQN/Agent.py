@@ -161,7 +161,7 @@ class Agent():
     def train(self):
         episode_rewards = [0.0]
         average_rewards = []
-        episode_scores = [0.0]
+        high_score = -float('inf')
         average_rewards_epochs = []
         losses = []
         current_state = self.env.reset()
@@ -184,10 +184,9 @@ class Agent():
 
             # Game-over
             if done:
-                episode_scores[-1] = current_state['blstats'][STATS_INDICES['score']]
+                high_score = max(current_state['blstats'][STATS_INDICES['score']], high_score)
                 current_state = self.env.reset()
                 episode_rewards.append(0.0)
-                episode_scores.append(0.0)
             else:
                 glyphs_states_, stats_states_ = transform_observation(state_)
                 self.buffer_memory.add(observed_glyphs,
@@ -217,6 +216,7 @@ class Agent():
                 print("steps: {}".format(time_step))
                 print("episodes: {}".format(num_episodes))
                 print("mean 100 episode reward: {}".format(mean_100ep_reward))
+                print("current high score: {}".format(high_score))
                 print("% time spent exploring: {}".format(int(100 * eps_threshold)))
                 print("********************************************************")
 
