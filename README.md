@@ -69,7 +69,7 @@ observation_space['glyphs'] = Box(0, 5976, (21, 79), int16), which may represent
 
 observation_space['blstats'] = Box(-something, +something, (25, ), int16), which are 25 stats in an array: <br>
 - [0] : X_Coordinate
-- [1] : Y_Coordinate (Strength) <br>
+- [1] : Y_Coordinate <br>
 - [2] : Strength Percentage<br>
 - [3] : Strength (Strength corresponds to the ability to have more weight in your inventory.) <br>
 - [4] : Dexterity (has a multitude of effects, of which the most significant is probably that it affects your chance of hitting monsters, whether in melee combat or with a missile or spell) <br>
