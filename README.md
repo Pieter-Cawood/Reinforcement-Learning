@@ -60,7 +60,7 @@ By default, the action space includes the following that might be stepped in gym
 - [21] : Eat <br>
 - [22] : Search <br>
 
-To reduce the action space, I'm removing the actions that auto move (9 - 16)
+To reduce the action space, I'm removing the actions that auto move (0, and 9 - 16)
 
 
 ## The observation space (We have to make sure the blstats expanded here are correct.):
