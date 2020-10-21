@@ -105,9 +105,6 @@ and it better to use extrinsic rewards. (From Gym reward feedback.)
 
 
 ### First tryout seems promising
-91a34118528c:python -u /opt/.pycharm_helpers/pydev/pydevd.py --multiprocess --qt-support=auto --port 56681 --file /opt/project/Agent.py
-Connected to pydev debugger (build 202.7660.27)
- 
 ********************************************************
 steps: 668
 episodes: 2
