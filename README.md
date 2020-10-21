@@ -60,7 +60,7 @@ observation_space['blstats'] = Box(-something, +something, (25, ), int16), which
 - [24] : NLE stat   <br>
 - [25] : NLE stat  <br>
 
-To avoid overfitting, I am only trying x & y coords, Hp devided by MaxXp, and Hunger level  (Considered score, but I think that's an intrinsic reward.)
+To avoid overfitting, I am only trying x & y coords, Hp devided by MaxXp, and Hunger level  (Considered score, but if you think about it, the model should not learn based on the current scores.)
 
 #### Observations are not normalized
 Due to the symbollic representation, the observations should not be normalized. 
