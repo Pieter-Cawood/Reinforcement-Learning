@@ -100,7 +100,7 @@ To avoid overfitting, I am only trying x & y coords, Hp devided by MaxXp, and Hu
 Due to the symbollic representation, the observations should not be normalized. 
 
 ## Rewards
-Maybe its a good idea to clip the rewards as the NLE paper did using tanh(r/100). They also note that intrinsic rewards, such as gold value etc do not yield good results,
+Maybe its a good idea to clip the rewards as the NLE paper did using tanh(r/100) (I am not doing this yet.) . They also note that intrinsic rewards, such as gold value etc do not yield good results,
 and it better to use extrinsic rewards. (From Gym reward feedback.) The rewards are computed as new_score - old_score
 
 
