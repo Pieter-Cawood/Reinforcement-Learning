@@ -28,7 +28,7 @@ https://github.com/facebookresearch/nle/blob/master/nle/agent/agent.py
 This means we don't have to pickup items.
 
 
-## The observation space :
+## The observation space (I think the blstats is in this format.):
 If we work with the same setup as the example agent we have the following: <br>
 observation_space['glyphs'] = Box(0, 5976, (21, 79), int16), which may represent a symbol with int val between 0 and 5976 in the shape (height=21, width=79)  <br>
 
