@@ -109,77 +109,77 @@ and it better to use extrinsic rewards. (From Gym reward feedback.) The rewards 
 steps: 668
 episodes: 2
 mean 100 episode reward: -5.0
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 853
 episodes: 3
 mean 100 episode reward: -1.2
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 1369
 episodes: 4
 mean 100 episode reward: -1.9
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 1939
 episodes: 5
 mean 100 episode reward: -2.5
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 2314
 episodes: 6
 mean 100 episode reward: -2.5
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 3251
 episodes: 7
 mean 100 episode reward: -3.2
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 4064
 episodes: 8
 mean 100 episode reward: -3.1
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 4219
 episodes: 9
 mean 100 episode reward: -2.3
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 5490
 episodes: 10
 mean 100 episode reward: -0.6
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 7894
 episodes: 11
 mean 100 episode reward: 6.5
-% time spent exploring: 99
+
 ********************************************************
  
 ********************************************************
 steps: 8525
 episodes: 12
 mean 100 episode reward: 6.0
-% time spent exploring: 99
+
 ********************************************************
 
 Process finished with exit code 137
