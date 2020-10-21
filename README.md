@@ -27,8 +27,37 @@ https://github.com/facebookresearch/nle/blob/master/nle/agent/agent.py
 ] <br>
 This means we don't have to pickup items.
 
+## The action space:
+The action space might be extended to included all 90'something actions, 
+By default, the action space includes the following that might be stepped in gym:
+- [0] : More (Not doing anything)
+- [1] : North 1 step <br>
+- [2] : East 1 step <br>
+- [3] : South 1 step <br>
+- [4] : West 1 step <br>
+- [5] : North-East 1 step <br>
+- [6] : Sout-East 1 step <br>
+- [7] : South-West 1 step <br>
+- [8] : North-West 1 step <br>
+- [9] : North max <br>
+- [10] : East max <br>
+- [11] : South max <br>
+- [12] : West max <br>
+- [13] : North-East max <br>
+- [14] : Sout-East max <br>
+- [15] : South-West max <br>
+- [16] : North-West max <br>
+- [17] : Go up a staircase <br>
+- [18] : Go down a starcase <br>
+- [19] : Wait / Do nothing <br>
+- [20] : Kick <br>
+- [21] : Eat <br>
+- [22] : Search <br>
 
-## The observation space (We have to make sure the blstats are correct.):
+To reduce the action space, I'm removing the actions that auto move (9 - 16)
+
+
+## The observation space (We have to make sure the blstats expanded here are correct.):
 If we work with the same setup as the example agent we have the following: <br>
 observation_space['glyphs'] = Box(0, 5976, (21, 79), int16), which may represent a symbol with int val between 0 and 5976 in the shape (height=21, width=79)  <br>
 
