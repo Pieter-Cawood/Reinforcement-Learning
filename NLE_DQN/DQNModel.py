@@ -103,7 +103,6 @@ class DQNModel(nn.Module):
                                       kernel_size=3,
                                       stride=1,
                                       padding=1)
-
         self.glyph_flatten = nn.Flatten()
 
         # MLP network for the character statistics

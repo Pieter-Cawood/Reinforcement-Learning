@@ -11,22 +11,21 @@ from nle import nethack
 from DQNModel import DQNModel
 from replay_buffer import ReplayBuffer
 
-
 parser = argparse.ArgumentParser(description="PyTorch Agent")
 parser.add_argument("--env", type=str, default="NetHackScore-v0",
                     help="Gym environment.")
 parser.add_argument("--mode", default="train",
                     choices=["train", "test", "test_render"],
                     help="Training or test mode.")
-parser.add_argument("--learning_rate", default=0.00048,
+parser.add_argument("--learning_rate", default=0.0048,
                     type=float, metavar="LR", help="Learning rate.")
 parser.add_argument("--discount_factor", default=0.99,
                     type=float, help="The discount factor.")
 parser.add_argument("--device", default="cpu",
                     type=str, help="Torch device")
-parser.add_argument("--total_steps", default=10000000, type=int,
+parser.add_argument("--total_steps", default=3000000, type=int,
                     help="Total number of steps to train over")
-parser.add_argument("--batch_size", default=32, type=int,
+parser.add_argument("--batch_size", default=8, type=int,
                     help="Number of transitions to optimize at the same time.")
 parser.add_argument("--eps_start", default=1.0, type=float,
                     help="e-greedy start threshold.")
@@ -38,34 +37,36 @@ parser.add_argument("--target_update_freq", default=500, type=float,
                     help="number of iterations between every target network update.")
 parser.add_argument("--print_freq", default=10, type=float,
                     help="number of episodes before print.")
+parser.add_argument("--grad_norm_clipping", default=40.0, type=float,
+                    help="Global gradient norm clip.")
 
 STATS_DIM = 4  # Only including x coordinate, y coordinate, HP percentage and hunger level
 
 STATS_INDICES = {
-                    'x_coordinate' : 0,
-                    'y_coordinate' : 1,
-                    'score' : 9,
-                    'health_points' : 10,
-                    'health_points_max' : 11,
-                    'hunger_level' : 18,
-                }
+    'x_coordinate': 0,
+    'y_coordinate': 1,
+    'score': 9,
+    'health_points': 10,
+    'health_points_max': 11,
+    'hunger_level': 18,
+}
 
 ACTIONS = [
-            nethack.CompassCardinalDirection.N,
-            nethack.CompassCardinalDirection.E,
-            nethack.CompassCardinalDirection.S,
-            nethack.CompassCardinalDirection.W,
-            nethack.CompassIntercardinalDirection.NE,
-            nethack.CompassIntercardinalDirection.SE,
-            nethack.CompassIntercardinalDirection.SW,
-            nethack.CompassIntercardinalDirection.NW,
-            nethack.MiscDirection.UP,
-            nethack.MiscDirection.DOWN,
-            nethack.MiscDirection.WAIT,
-            nethack.Command.KICK,
-            nethack.Command.EAT,
-            nethack.Command.SEARCH
-          ]
+    nethack.CompassCardinalDirection.N,
+    nethack.CompassCardinalDirection.E,
+    nethack.CompassCardinalDirection.S,
+    nethack.CompassCardinalDirection.W,
+   # nethack.CompassIntercardinalDirection.NE,
+   # nethack.CompassIntercardinalDirection.SE,
+  #  nethack.CompassIntercardinalDirection.SW,
+   # nethack.CompassIntercardinalDirection.NW,
+    nethack.MiscDirection.UP,
+    nethack.MiscDirection.DOWN,
+    nethack.MiscDirection.WAIT,
+    nethack.Command.KICK,
+    nethack.Command.EAT,
+    nethack.Command.SEARCH
+]
 
 
 def transform_observation(observation):
@@ -75,28 +76,27 @@ def transform_observation(observation):
 
     stat_x_coord = observation['blstats'][STATS_INDICES['x_coordinate']]
     stat_y_coord = observation['blstats'][STATS_INDICES['y_coordinate']]
-    stat_health = float(observation['blstats'][STATS_INDICES['health_points']]) /\
+    stat_health = float(observation['blstats'][STATS_INDICES['health_points']]) / \
                   float(observation['blstats'][STATS_INDICES['health_points_max']])
     stat_hunger = observation['blstats'][STATS_INDICES['hunger_level']]
     observed_stats = np.array([stat_x_coord, stat_y_coord, stat_health, stat_hunger])
     return observed_glyphs.astype(np.float32), observed_stats.astype(np.float32)
 
+
 class Agent():
     def __init__(self, flags):
         self.flags = flags
         self.env = gym.make(flags.env, actions=ACTIONS)
-        self.policy_network  = DQNModel(self.env.observation_space["glyphs"].shape,
-                                        STATS_DIM,
-                                        self.env.action_space.n)
-        self.target_network  = DQNModel(self.env.observation_space["glyphs"].shape,
-                                        STATS_DIM,
-                                        self.env.action_space.n)
+        self.policy_network = DQNModel(self.env.observation_space["glyphs"].shape,
+                                       STATS_DIM,
+                                       self.env.action_space.n)
+        self.target_network = DQNModel(self.env.observation_space["glyphs"].shape,
+                                       STATS_DIM,
+                                       self.env.action_space.n)
 
         self.buffer_memory = ReplayBuffer(self.flags.batch_size)
 
-        self.optimizer = torch.optim.Adam(self.policy_network.parameters(), lr= self.flags.learning_rate)
-
-
+        self.optimizer = torch.optim.Adam(self.policy_network.parameters(), lr=self.flags.learning_rate)
 
         # TODO Initialise your agent's models
 
@@ -120,14 +120,14 @@ class Agent():
         with torch.no_grad():
             Q_vals_next = self.policy_network(glyphs_states_, stats_states_)
             _, action_next_max = Q_vals_next.max(1)
-            Q_val_next_max = self.target_network(glyphs_states_, stats_states_).\
+            Q_val_next_max = self.target_network(glyphs_states_, stats_states_). \
                 gather(1, action_next_max.unsqueeze(1)).squeeze()
 
         # Set y_j for each mini-batch entry,
         # If terminal then Q = rewards only
         Q_target = rewards + (1 - dones) * self.flags.discount_factor * Q_val_next_max
         # Recompute gradients and get values
-        Q_current = self.policy_network(glyphs_states, stats_states).\
+        Q_current = self.policy_network(glyphs_states, stats_states). \
             gather(1, actions.unsqueeze(1)).squeeze()
 
         # Perform a gradient descent step on (y_j - Q)^2 ( loss )
@@ -138,10 +138,10 @@ class Agent():
         # Backward pass: compute gradients
         self.optimizer.zero_grad()
         loss.backward()
+        nn.utils.clip_grad_norm_(self.policy_network.parameters(), 40.0)
         # Update optimizer parameters
         self.optimizer.step()
         return loss.item()
-
 
     def update_target_network(self):
         """
@@ -166,6 +166,7 @@ class Agent():
         losses = []
         current_state = self.env.reset()
         for time_step in range(flags.total_steps):
+            high_score = max(current_state['blstats'][STATS_INDICES['score']], high_score)
             observed_glyphs, observed_stats = transform_observation(current_state)
             # Annealing e-greedy
             eps_timesteps = self.flags.eps_frac * self.flags.total_steps
@@ -177,14 +178,19 @@ class Agent():
                 action = self._act(observed_glyphs, observed_stats)
             # Take a leap of faith in the environment, store transition
             # info for mini-batch SGD
-            state_, reward, done, info = self.env.step(action)
+            try:
+                state_, reward, done, info = self.env.step(action)
+            except:
+                self.env = gym.make(flags.env, actions=ACTIONS)
+                current_state = self.env.reset()
+                reward = -1
 
             # Sum step reward for episode's total
             episode_rewards[-1] += reward
 
             # Game-over
             if done:
-                high_score = max(current_state['blstats'][STATS_INDICES['score']], high_score)
+
                 current_state = self.env.reset()
                 episode_rewards.append(0.0)
             else:
@@ -204,8 +210,8 @@ class Agent():
                 losses.append(loss)
 
             # Target network every specified run
-            if time_step > self.flags.batch_size and\
-               time_step % self.flags.target_update_freq == 0:
+            if time_step > self.flags.batch_size and \
+                    time_step % self.flags.target_update_freq == 0:
                 self.update_target_network()
             if done:
                 num_episodes = len(episode_rewards)
