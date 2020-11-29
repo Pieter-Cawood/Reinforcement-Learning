@@ -2,12 +2,13 @@
 
 import subprocess
 import sys
+
 subprocess.check_call([sys.executable, "-m", "pip", "install", 'matplotlib'])
 
-import torch 
+import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import copy
+import torch.nn.functional as fun
+# import copy
 import warnings
 warnings.filterwarnings("ignore")
 import numpy as np
@@ -15,6 +16,7 @@ from collections import OrderedDict
 import gym
 import nle
 import pickle
+from abc import ABC
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
@@ -65,10 +67,10 @@ def crop_state(observation):
 
 
 
-class actorCriticNet(nn.Module):
+class ActorCriticNet(nn.Module, ABC):
     def __init__(self, in_shape, out_shape, n_hidden_layers=4, n_hidden_nodes=32,
                  learning_rate=0.01, bias=False, device='cpu'):
-        super(actorCriticNet, self).__init__()
+        super(ActorCriticNet, self).__init__()
 
         self.device = device
         self.n_inputs = in_shape
@@ -133,7 +135,7 @@ class actorCriticNet(nn.Module):
             
     def predict(self, state):
         body_output = self.get_body_output(state)
-        probs = F.softmax(self.policy(body_output), dim=-1)
+        probs = fun.softmax(self.policy(body_output), dim=-1)
         return probs, self.value(body_output)
 
     def get_body_output(self, state):
@@ -153,16 +155,34 @@ class actorCriticNet(nn.Module):
     
     def get_log_probs(self, state):
         body_output = self.get_body_output(state)
-        logprobs = F.log_softmax(self.policy(body_output), dim=-1)
+        logprobs = fun.log_softmax(self.policy(body_output), dim=-1)
         return logprobs
     
     
-class A2C():
-    def __init__(self, env, network):
+class A2C:
+    def __init__(self, envi, network):
         
-        self.env = env
+        self.env = envi
         self.network = network
-        self.action_space = np.arange(env.action_space.n)
+        self.action_space = np.arange(envi.action_space.n)
+        self.s_0 = 0
+        self.reward = 0
+        self.n_steps = 0
+        self.gamma = 0
+        self.num_episodes = 0
+        self.beta = 0
+        self.zeta = 0
+        self.batch_size = 0
+        self.ep_counter = 0
+
+        # Set up lists to log data
+        self.ep_rewards = []
+        self.kl_div = []
+        self.policy_loss = []
+        self.value_loss = []
+        self.entropy_loss = []
+        self.total_policy_loss = []
+        self.total_loss = []
         
     def generate_episode(self):
         states, actions, rewards, dones, next_states = [], [], [], [], []
@@ -208,8 +228,8 @@ class A2C():
         state_values = state_values.detach().numpy().flatten()
         next_state_values = next_state_values.detach().numpy().flatten()
         
-        G = np.zeros_like(rewards, dtype=np.float32)
-        td_delta = np.zeros_like(rewards, dtype=np.float32)
+        g = np.zeros_like(rewards, dtype=np.float32)
+        # td_delta = np.zeros_like(rewards, dtype=np.float32)
         dones = np.array(dones)
         
         for t in range(total_steps):
@@ -223,14 +243,14 @@ class A2C():
                     last_step = next_ep_completion
             
             # Sum and discount rewards
-            G[t] = sum([rewards[t+n:t+n+1] * self.gamma ** n for 
+            g[t] = sum([rewards[t+n:t+n+1] * self.gamma ** n for
                         n in range(last_step)])
         
         if total_steps > self.n_steps:
-            G[:total_steps - self.n_steps] += next_state_values[self.n_steps:] \
+            g[:total_steps - self.n_steps] += next_state_values[self.n_steps:] \
                 * self.gamma ** self.n_steps
-        td_delta = G - state_values
-        return G, td_delta
+        td_delta = g - state_values
+        return g, td_delta
         
     def train(self, n_steps=5, batch_size=10, num_episodes=2000, 
               gamma=0.99, beta=1e-3, zeta=0.5):
@@ -256,12 +276,12 @@ class A2C():
         while self.ep_counter < num_episodes:
             
             batch = self.generate_episode()
-            G, td_delta = self.calc_rewards(batch)
+            g, td_delta = self.calc_rewards(batch)
             states = batch[0]
             actions = batch[1]
             current_probs = self.network.predict(states)[0].detach().numpy()
             
-            self.update(states, actions, G, td_delta)
+            self.update(states, actions, g, td_delta)
             
             new_probs = self.network.predict(states)[0].detach().numpy()
             kl = -np.sum(current_probs * np.log(new_probs / current_probs))                
@@ -311,8 +331,8 @@ class A2C():
 
         plt.tight_layout()
         
-    def calc_loss(self, states, actions, rewards, advantages, beta=0.001):
-        actions_t = torch.LongTensor(actions).to(self.network.device)
+    def calc_loss(self, states, actions, rewards, advantages):
+        # actions_t = torch.LongTensor(actions).to(self.network.device)
         rewards_t = torch.FloatTensor(rewards).to(self.network.device)
         advantages_t = torch.FloatTensor(advantages).to(self.network.device)
         
@@ -364,7 +384,7 @@ if __name__ == '__main__':
     env = gym.make("NetHackScore-v0")
     in_s = crop_state(env.reset()).shape[0]
     out_s = env.action_space.n
-    net = actorCriticNet(in_shape=in_s, out_shape=out_s, learning_rate=1e-3, n_hidden_layers=4, n_hidden_nodes=64)
+    net = ActorCriticNet(in_shape=in_s, out_shape=out_s, learning_rate=1e-3, n_hidden_layers=4, n_hidden_nodes=64)
     a2c = A2C(env, net)
     a2c.train(n_steps=10000, num_episodes=500, beta=1e-3, zeta=1e-3)
     a2c.plot_results()
