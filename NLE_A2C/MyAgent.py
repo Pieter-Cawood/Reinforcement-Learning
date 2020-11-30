@@ -134,6 +134,12 @@ class ActorCriticNet(nn.Module, ABC):
         action = np.random.choice(self.action_space, p=probs)
         return action
 
+    def get_greedy_action(self, state):
+        probs = self.predict(state)[0].detach().numpy()
+        ind = np.argmax(probs)
+        action = self.action_space[ind]
+        return action
+
     def get_log_probs(self, state):
         body_output = self.get_body_output(state)
         logprobs = fun.log_softmax(self.policy(body_output), dim=-1)
@@ -157,5 +163,5 @@ class MyAgent:
     def act(self, observation):
         # Perform processing to observation
         state = crop_state(observation)
-        action = self.net.get_action(state)
+        action = self.net.get_greedy_action(state)
         return action

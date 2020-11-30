@@ -386,9 +386,8 @@ if __name__ == '__main__':
     out_s = env.action_space.n
     net = ActorCriticNet(in_shape=in_s, out_shape=out_s, learning_rate=1e-3, n_hidden_layers=4, n_hidden_nodes=64)
     a2c = A2C(env, net)
-    a2c.train(n_steps=10000, num_episodes=500, beta=1e-3, zeta=1e-3)
+    a2c.train(n_steps=5000, num_episodes=1000, beta=1e-3, zeta=1e-3)
     a2c.plot_results()
     torch.save(net.state_dict(), '/opt/project/netState.pkl')
     with open('/opt/project/netParams.pkl', 'wb') as f:
         pickle.dump([net.n_inputs, net.n_outputs, net.learning_rate, net.n_hidden_layers, net.n_hidden_nodes], f)
-    # a2c.play()

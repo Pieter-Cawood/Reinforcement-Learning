@@ -1,0 +1,4 @@
+4 hidden layers decreasing with 64 nodes
+gamma = 0.99
+steps	episodes
+5000 	1000
