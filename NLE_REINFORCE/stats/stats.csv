@@ -1,0 +1,2 @@
+end_status,score,time,steps,hp,exp,exp_lev,gold,hunger,killer_name,deepest_lev,episode,seeds,ttyrec
+1,0,4,5000,14,0,1,0,1,UNK,1,1,1,episode_1.ttyrec
