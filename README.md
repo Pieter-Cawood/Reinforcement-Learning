@@ -96,14 +96,4 @@ observation_space['blstats'] = Box(-something, +something, (25, ), int16), which
 
 To avoid overfitting, I am only trying x & y coords, Hp devided by MaxXp, and Hunger level  (Considered score, but if you think about it, the model should not learn based on the current scores.)
 
-#### Observations are not normalized
-Due to the symbollic representation, the observations should not be normalized. 
-
-## Rewards
-Maybe its a good idea to clip the rewards as the NLE paper did using tanh(r/100) (I am not doing this yet.) . They also note that intrinsic rewards, such as gold value etc do not yield good results,
-and it better to use extrinsic rewards. (From Gym reward feedback.) The rewards are computed as new_score - old_score
-
-
-
-
 
