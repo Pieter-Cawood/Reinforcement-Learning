@@ -1,4 +1,16 @@
-# NetHack Project
+# Reinforcement Learning in the NetHack Environment
+
+![Taxonomy](resources/rl_taxonomy.png)
+
+Methods we used:
+- Advantage Actor Critic (A2C)
+- A2C + LSTM
+- Model Based Search (MBS)
+- REINFORCE
+
+
+## Useful NLE links
+
 NetHack Wiki: (Useful info.)<br>
 https://nethackwiki.com/
 
@@ -95,15 +107,5 @@ observation_space['blstats'] = Box(-something, +something, (25, ), int16), which
 - [24] : NLE stat   <br>
 
 To avoid overfitting, I am only trying x & y coords, Hp devided by MaxXp, and Hunger level  (Considered score, but if you think about it, the model should not learn based on the current scores.)
-
-#### Observations are not normalized
-Due to the symbollic representation, the observations should not be normalized. 
-
-## Rewards
-Maybe its a good idea to clip the rewards as the NLE paper did using tanh(r/100) (I am not doing this yet.) . They also note that intrinsic rewards, such as gold value etc do not yield good results,
-and it better to use extrinsic rewards. (From Gym reward feedback.) The rewards are computed as new_score - old_score
-
-
-
 
 
