@@ -1,3 +1,8 @@
+"""
+Modified the DQN method from https://github.com/raillab/dqn
+
+"""
+
 import gym
 from gym.envs import registration
 from nle import nethack
