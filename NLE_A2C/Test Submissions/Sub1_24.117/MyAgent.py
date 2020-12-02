@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from collections import OrderedDict
 import pathlib
 
+np.random.seed(42)
 
 STATS_INDICES = {
     'x_coordinate': 0,

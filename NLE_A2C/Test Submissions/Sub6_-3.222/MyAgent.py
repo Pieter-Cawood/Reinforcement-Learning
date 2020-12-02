@@ -150,7 +150,7 @@ class ActorCriticNet(nn.Module, ABC):
 def load_agent():
     path = str(pathlib.Path(__file__).parent.absolute())
     param_path = path + '/a2c_net.pkl'
-    state_path = path + '/2000/a2c_state.pkl'
+    state_path = path + '/a2c_state.pkl'
     with open(param_path, 'rb') as f:
         in_s, out_s, hidden, lr, b = pickle.load(f)
     net = ActorCriticNet(in_shape=in_s, out_shape=out_s, hidden_layers=hidden, learning_rate=lr, bias=b)
@@ -168,5 +168,5 @@ class MyAgent:
     def act(self, observation):
         # Perform processing to observation
         state = crop_state(observation)
-        action = self.net.get_action(state)
+        action = self.net.get_greedy_action(state)
         return action

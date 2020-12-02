@@ -1,6 +1,6 @@
 # https://www.datahubbs.com/two-headed-a2c-network-in-pytorch/
 
-PLOT = False
+PLOT = True
 
 if PLOT:
     import subprocess
@@ -58,7 +58,7 @@ def crop_state(observation):
     stat_health = float(observation['blstats'][STATS_INDICES['health_points']]) - float(
         observation['blstats'][STATS_INDICES['health_points_max']] / 2)
     stat_hunger = observation['blstats'][STATS_INDICES['hunger_level']]
-    observed_stats = np.array([stat_x_coord, stat_y_coord, stat_health, stat_hunger])
+    observed_stats = np.array([stat_health, stat_hunger])
     # observed_stats = observation['blstats'][:].flatten()
 
     # observed_glyphs = observation['glyphs'][:,:].flatten()
@@ -249,7 +249,7 @@ class A2C:
         td_delta = g - state_values
         return g, td_delta
         
-    def train(self, n_steps=5, batch_size=10, num_episodes=2000, gamma=1, beta=1e-3, zeta=0.5):
+    def train(self, n_steps=5, batch_size=10, num_episodes=2000, gamma=1, beta=1e-3, zeta=1e-3):
         self.n_steps = n_steps
         self.gamma = gamma
         self.num_episodes = num_episodes
@@ -381,14 +381,14 @@ if __name__ == '__main__':
     in_s = crop_state(env.reset()).shape[0]
     out_s = env.action_space.n
     diff = in_s - out_s
-    n_layers = 8
+    n_layers = 4
     hidden = np.rint(in_s - (np.arange(n_layers) + 0.5)*diff/n_layers)
     hidden = [int(h) for h in hidden]
     lr = 1e-3
     b = True
     net = ActorCriticNet(in_shape=in_s, out_shape=out_s, hidden_layers=hidden, learning_rate=lr, bias=b)
     a2c = A2C(env, net)
-    a2c.train(n_steps=1000000, num_episodes=100)
+    a2c.train(n_steps=10000, num_episodes=100)
     if PLOT:
         a2c.plot_results()
     torch.save(net.state_dict(), '/opt/project/a2c_state.pkl')

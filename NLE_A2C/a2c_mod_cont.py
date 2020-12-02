@@ -1,6 +1,6 @@
 # https://www.datahubbs.com/two-headed-a2c-network-in-pytorch/
 
-PLOT = False
+PLOT = True
 
 if PLOT:
     import subprocess
@@ -388,10 +388,8 @@ if __name__ == '__main__':
     env = gym.make("NetHackScore-v0")
     net = load_agent()
     a2c = A2C(env, net)
-    for j in range(9):
-        print("Training session:", j, end='')
-        a2c.train(n_steps=1000000, num_episodes=100)
-        if PLOT:
-            a2c.plot_results()
-        file_name = '/opt/project/a2c_state' + str(j+1) + '.pkl'
-        torch.save(net.state_dict(), file_name)
+    a2c.train(n_steps=10000, num_episodes=500)
+    if PLOT:
+        a2c.plot_results()
+    file_name = '/opt/project/a2c_state.pkl'
+    torch.save(net.state_dict(), file_name)

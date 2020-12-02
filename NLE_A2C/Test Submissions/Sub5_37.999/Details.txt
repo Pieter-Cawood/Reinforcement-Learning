@@ -1,0 +1,9 @@
+4 hidden layers decreasing from 229 to 23 in equal steps
+gamma = 0.99
+steps	episodes
+100 	100
+200 	100
+500 	200
+750 	200
+1000	200
+2000	200

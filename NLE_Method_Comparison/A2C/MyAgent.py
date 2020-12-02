@@ -150,7 +150,7 @@ class ActorCriticNet(nn.Module, ABC):
 def load_agent():
     path = str(pathlib.Path(__file__).parent.absolute())
     param_path = path + '/a2c_net.pkl'
-    state_path = path + '/2000/a2c_state.pkl'
+    state_path = path + '/a2c_state.pkl'
     with open(param_path, 'rb') as f:
         in_s, out_s, hidden, lr, b = pickle.load(f)
     net = ActorCriticNet(in_shape=in_s, out_shape=out_s, hidden_layers=hidden, learning_rate=lr, bias=b)
@@ -159,10 +159,9 @@ def load_agent():
 
 
 class MyAgent:
-    def __init__(self, observation_space, action_space, **kwargs):
+    def __init__(self, observation_space, action_space):
         self.observation_space = observation_space
         self.action_space = action_space
-        self.seeds = kwargs.get('seeds', None)
         self.net = load_agent()
 
     def act(self, observation):
