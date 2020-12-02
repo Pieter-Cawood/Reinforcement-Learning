@@ -2,7 +2,7 @@
 
 ![Taxonomy](resources/rl_taxonomy.png)
 
-Methods we used:
+**Methods we used:**
 - Advantage Actor Critic (A2C)
 - A2C + LSTM
 - Model Based Search (MBS)
