@@ -1,4 +1,4 @@
-# Reinforcement Learnign in the NetHack Environment
+# Reinforcement Learning in the NetHack Environment
 NetHack Wiki: (Useful info.)<br>
 https://nethackwiki.com/
 
