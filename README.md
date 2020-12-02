@@ -1,7 +1,16 @@
 # Reinforcement Learning in the NetHack Environment
 
-![Taxonomy](resources/RL_taxonomy.png)
+### RLTaxonomy
+![Taxonomy](resources/rl_taxonomy.png)
 
+Methods we used:
+- Advantage Actor Critic (A2C)
+- A2C + LSTM
+- Model Based Search (MBS)
+- REINFORCE
+
+
+## Useful NLE links
 
 NetHack Wiki: (Useful info.)<br>
 https://nethackwiki.com/
