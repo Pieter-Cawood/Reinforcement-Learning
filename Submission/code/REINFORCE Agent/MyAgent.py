@@ -66,7 +66,7 @@ class Policy(nn.Module):
 class MyAgent:
     def __init__(self, observation_space, action_space, seeds):
         path = str(pathlib.Path(__file__).parent.absolute())
-        state_path = path + '/data.pkl'
+        state_path = path + '/state_msg4.pkl'
         #policy_model = torch.load('/home/clarise/Desktop/COMS7053A - RL/mod_msg4.pt')
         policy_model = Policy(256,23)
         policy_model.load_state_dict(torch.load(state_path))
