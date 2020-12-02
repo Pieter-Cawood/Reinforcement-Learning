@@ -1,6 +1,5 @@
 # Reinforcement Learning in the NetHack Environment
 
-### RLTaxonomy
 ![Taxonomy](resources/rl_taxonomy.png)
 
 Methods we used:
