@@ -1,4 +1,8 @@
 # Reinforcement Learning in the NetHack Environment
+
+![Taxonomy](resources/RL_taxonomy.png)
+
+
 NetHack Wiki: (Useful info.)<br>
 https://nethackwiki.com/
 
